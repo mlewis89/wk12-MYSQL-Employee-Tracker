@@ -1,19 +1,19 @@
 const inquirer = require('inquirer');
 require('dotenv').config();
-const mysql =  require('mysql2');
+const mysql = require('mysql2');
 
 // Connect to database
 const db = mysql.createConnection({
-        host: 'localhost',
-        user: process.env.DB_USER,
-        password: process.env.DB_PASSWORD,
-        database: process.env.DB_NAME
-    },
+    host: 'localhost',
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME
+},
     console.log(`Connected to the ${process.env.DB_NAME} database.`)
 );
 
-const generateASCIIBANNER = () => 
-`-----------------------------------------------------------------------------------------------
+const generateASCIIBANNER = () =>
+    `-----------------------------------------------------------------------------------------------
 |   ________                          __                                                       |
 |  |        \                        |  \                                                      |
 |  | $$$$$$$$ ______ ____    ______  | $$  ______   __    __   ______    ______                |
@@ -53,11 +53,34 @@ inquirer
         message: 'What would you like to do?',
         choices: ['view all departments', 'view all roles', 'view all employees', 'add a department', 'add a role', 'add an employee', 'update an employee role']
     }])
-    .then((answers) => { //after user has answered allk questions, generate the readme file.
-        if()
+    .then((answers) => { 
+        switch (answers.action) {
+            case 'view all departments':
+                // code block
+                break;
+            case 'view all roles':
+                // code block
+                break;
+            case 'view all employees':
+                // code block
+                break;
+            case 'add a department':
+                // code block
+                break;
+            case 'add a role':
+                // code block
+                break;
+            default:
+            case 'add an employee':
+                // code block
+                break;
+            default:
+            case 'update an employee role':
+                // code block
+                break;
+        }
     }
     );
-
 
 //WHEN I choose to view all departments
 //  THEN I am presented with a formatted table showing department names and department ids
