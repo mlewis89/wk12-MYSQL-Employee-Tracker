@@ -118,7 +118,7 @@ const add_Department = ()=>{
 
 //WHEN I choose to add a role
 //  THEN I am prompted to enter the name, salary, and department for the role and that role is added to the database
-const add_Role = ()=>{{
+const add_Role = ()=>{
     //TODO - popuplate from database;
     departments = [];
 
@@ -150,6 +150,39 @@ const add_Role = ()=>{{
 //WHEN I choose to add an employee
 //  THEN I am prompted to enter the employee’s first name, last name, role, and manager, and that employee is added to the database
 const add_Employee = ()=>{
+    //TODO - popuplate from database;
+    roles = [];
+    managers = [];
+
+    inquirer
+    .prompt([{
+        type: 'Input',
+        name: 'firstName',
+        message: 'First Name?'
+    },
+    {
+        type: 'Input',
+        name: 'lastName',
+        message: 'Last Name?'
+    },
+    {
+        //license, 
+        type: 'list',
+        name: 'role',
+        message: 'please select a role?',
+        choices: roles 
+    }
+    {
+        //license, 
+        type: 'list',
+        name: 'manager',
+        message: 'please select a manager?',
+        choices: managers
+    }])
+    .then((answers) => { 
+        //**todo** add new role to database
+        }
+    );
     
 };
 
