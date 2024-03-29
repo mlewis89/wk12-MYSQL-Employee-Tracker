@@ -56,27 +56,25 @@ inquirer
     .then((answers) => { 
         switch (answers.action) {
             case 'view all departments':
-                // code block
+                viewAll_Departments();
                 break;
             case 'view all roles':
-                // code block
+                viewAll_Roles();
                 break;
             case 'view all employees':
-                // code block
+                viewAll_Employees();
                 break;
             case 'add a department':
-                // code block
+                add_Department()
                 break;
             case 'add a role':
-                // code block
+                add_Role();
                 break;
-            default:
             case 'add an employee':
-                // code block
+                add_Employee();
                 break;
-            default:
             case 'update an employee role':
-                // code block
+                update_Employee();
                 break;
         }
     }
@@ -104,6 +102,17 @@ const viewAll_Employees = ()=>{
 //WHEN I choose to add a department
 //  THEN I am prompted to enter the name of the department and that department is added to the database
 const add_Department = ()=>{
+    inquirer
+    .prompt([{
+        //license, 
+        type: 'Input',
+        name: 'department',
+        message: 'New Department name?'
+    }])
+    .then((answers) => { 
+        //**todo** add new deparment to database
+        }
+    );
     
 };
 
