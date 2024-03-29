@@ -106,7 +106,7 @@ const add_Department = ()=>{
     .prompt([{
         //license, 
         type: 'Input',
-        name: 'department',
+        name: 'name',
         message: 'New Department name?'
     }])
     .then((answers) => { 
@@ -118,7 +118,32 @@ const add_Department = ()=>{
 
 //WHEN I choose to add a role
 //  THEN I am prompted to enter the name, salary, and department for the role and that role is added to the database
-const add_Role = ()=>{
+const add_Role = ()=>{{
+    //TODO - popuplate from database;
+    departments = [];
+
+    inquirer
+    .prompt([{
+        type: 'Input',
+        name: 'name',
+        message: 'New role name?'
+    },
+    {
+        type: 'Input',
+        name: 'salary',
+        message: 'what is the salary?'
+    },
+    {
+        //license, 
+        type: 'list',
+        name: 'department',
+        message: 'please select a department?',
+        choices: departments 
+    }])
+    .then((answers) => { 
+        //**todo** add new role to database
+        }
+    );
     
 };
 
