@@ -13,35 +13,20 @@ const db = mysql.createConnection({
 );
 
 const generateASCIIBANNER = () =>
-    `-----------------------------------------------------------------------------------------------
-|   ________                          __                                                       |
-|  |        \                        |  \                                                      |
-|  | $$$$$$$$ ______ ____    ______  | $$  ______   __    __   ______    ______                |
-|  | $$__    |      \    \  /      \ | $$ /      \ |  \  |  \ /      \  /      \               |
-|  | $$  \   | $$$$$$\$$$$\|  $$$$$$\| $$|  $$$$$$\| $$  | $$|  $$$$$$\|  $$$$$$\              |
-|  | $$$$$   | $$ | $$ | $$| $$  | $$| $$| $$  | $$| $$  | $$| $$    $$| $$    $$              |
-|  | $$_____ | $$ | $$ | $$| $$__/ $$| $$| $$__/ $$| $$__/ $$| $$$$$$$$| $$$$$$$$              |
-|  | $$     \| $$ | $$ | $$| $$    $$| $$ \$$    $$ \$$    $$ \$$     \ \$$     \              |
-|   \$$$$$$$$ \$$  \$$  \$$| $$$$$$$  \$$  \$$$$$$  _\$$$$$$$  \$$$$$$$  \$$$$$$$              |
-|                          | $$                    |  \__| $$                                  |
-|                          | $$                     \$$    $$                                  |
-|                           \$$                      \$$$$$$                                   |
-|   __       __                                                                                |
-|  |  \     /  \                                                                               |
-|  | $$\   /  $$  ______   _______    ______    ______    ______    ______                     |
-|  | $$$\ /  $$$ |      \ |       \  |      \  /      \  /      \  /      \                    |
-|  | $$$$\  $$$$  \$$$$$$\| $$$$$$$\  \$$$$$$\|  $$$$$$\|  $$$$$$\|  $$$$$$\                   |
-|  | $$\$$ $$ $$ /      $$| $$  | $$ /      $$| $$  | $$| $$    $$| $$   \$$                   |
-|  | $$ \$$$| $$|  $$$$$$$| $$  | $$|  $$$$$$$| $$__| $$| $$$$$$$$| $$                         |
-|  | $$  \$ | $$ \$$    $$| $$  | $$ \$$    $$ \$$    $$ \$$     \| $$                         |
-|   \$$      \$$  \$$$$$$$ \$$   \$$  \$$$$$$$ _\$$$$$$$  \$$$$$$$ \$$                         |
-|                                             |  \__| $$                                       |
-|                                                                                              |
-------------------------------------------------------------------------------------------------`;
+`----------------------------------------------------------------------------------------------------------------
+|                                                                                                               |
+|    _____                    _                              __  __ __                                          |
+|   | ____| _ __ ____  _ ___ | | _____  _   _  ___  ___     |  /   /  |  __ _  _ ___    __ _   __ _  ___  _ _   |
+|   |  _|  | '_ ' _  || '_  || ||  _  || | | |/ _ |/ _ |    |  ,   ,  | / _' || '_  | / _' | / _' |/ _ || '__|  |
+|   | |___ | | | | | || |_| || || |_| || |_| || __/| __/    | | | | | || (_| || | | || |_| || |_| || __/| |     |
+|   |_____||_| |_| |_|| .___||_||___ /  .__, ||___||___|    |_| |_| |_| __,__||_| |_|  __,_|| __, ||___||_|     |
+|                     |_|               |___/                                             |___/                 |
+|                                                                                                               |
+|                                                                                                               |  
+-----------------------------------------------------------------------------------------------------------------`;
 
-const ASCIIBanner = generateASCIIBANNER();
 
-console.log(ASCIIBanner);
+console.log(generateASCIIBANNER());
 
 //WHEN I start the application
 //  THEN I am presented with the following options: view all departments, view all roles, view all employees, add a department, add a role, add an employee, and update an employee role
@@ -83,20 +68,27 @@ inquirer
 //WHEN I choose to view all departments
 //  THEN I am presented with a formatted table showing department names and department ids
 const viewAll_Departments = ()=>{
-
+    db.query('SELECT * FROM department', function (err, results) {
+        console.table(results);
+      });
 };
 
 
 //WHEN I choose to view all roles
 //  THEN I am presented with the job title, role id, the department that role belongs to, and the salary for that role
 const viewAll_Roles = ()=>{
+    db.query('SELECT * FROM role', function (err, results) {
+        console.table(results);
+      });
     
 };
 
 //WHEN I choose to view all employees
 //  THEN I am presented with a formatted table showing employee data, including employee ids, first names, last names, job titles, departments, salaries, and managers that the employees report to
 const viewAll_Employees = ()=>{
-    
+    db.query('SELECT * FROM employee', function (err, results) {
+        console.table(results);
+      });
 };
 
 //WHEN I choose to add a department
@@ -120,8 +112,12 @@ const add_Department = ()=>{
 //  THEN I am prompted to enter the name, salary, and department for the role and that role is added to the database
 const add_Role = ()=>{
     //TODO - popuplate from database;
-    departments = [];
+    let departments = [];
+    db.query('SELECT * FROM employee', function (err, results) {
+        departments = results;
+      });
 
+      console.log(departments);
     inquirer
     .prompt([{
         type: 'Input',
@@ -166,14 +162,12 @@ const add_Employee = ()=>{
         message: 'Last Name?'
     },
     {
-        //license, 
         type: 'list',
         name: 'role',
         message: 'please select a role?',
         choices: roles 
-    }
+    },
     {
-        //license, 
         type: 'list',
         name: 'manager',
         message: 'please select a manager?',
@@ -190,7 +184,20 @@ const add_Employee = ()=>{
 //WHEN I choose to update an employee role
 //  THEN I am prompted to select an employee to update and their new role and this information is updated in the database
 const update_Employee = ()=>{
-    
+   employees = [];
+
+    inquirer
+    .prompt([
+    {
+        type: 'list',
+        name: 'employee',
+        message: 'please select an employee?',
+        choices: employees
+    }])
+    .then((answers) => { 
+        //**todo** add new role to database
+        }
+    );
 };
 
 //Bonus
