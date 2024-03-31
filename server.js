@@ -113,11 +113,10 @@ const add_Department = ()=>{
 const add_Role = ()=>{
     //TODO - popuplate from database;
     let departments = [];
-    db.query('SELECT * FROM employee', function (err, results) {
-        departments = results;
-      });
-
-      console.log(departments);
+    db.query('SELECT * FROM department', function (err, results) {
+        results.forEach((res)=> departments.push(res.name));
+              });
+              
     inquirer
     .prompt([{
         type: 'Input',
