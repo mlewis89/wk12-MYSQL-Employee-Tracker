@@ -116,7 +116,7 @@ const add_Role = ()=>{
     db.query('SELECT * FROM department', function (err, results) {
         results.forEach((res)=> departments.push(res.name));
               });
-              
+
     inquirer
     .prompt([{
         type: 'Input',
@@ -148,6 +148,14 @@ const add_Employee = ()=>{
     //TODO - popuplate from database;
     roles = [];
     managers = [];
+
+    db.query('SELECT * FROM role', function (err, results) {
+        results.forEach((res)=> roles.push(res.name));
+              });
+
+   db.query('SELECT * FROM employee', function (err, results) {
+    results.forEach((res)=> managers.push(res.name));
+    });
 
     inquirer
     .prompt([{
@@ -184,6 +192,9 @@ const add_Employee = ()=>{
 //  THEN I am prompted to select an employee to update and their new role and this information is updated in the database
 const update_Employee = ()=>{
    employees = [];
+   db.query('SELECT * FROM employee', function (err, results) {
+    results.forEach((res)=> employees.push(res.name));
+    });
 
     inquirer
     .prompt([
