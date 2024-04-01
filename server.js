@@ -251,7 +251,11 @@ const updateEmployeeRole = () => {
       db.query(
         "SELECT id AS value, CONCAT(first_name,' ',last_name) AS name FROM employee",
         function (err, employees) {
-          inquirer
+            if (err) {
+                console.log(err);
+                return -1;
+              }
+              inquirer
             .prompt([
               {
                 type: "list",
@@ -271,7 +275,11 @@ const updateEmployeeRole = () => {
                 "UPDATE employee SET role_id = ? WHERE id = ?",
                 [answers.role_id, answers.employee_id],
                 function (err, results) {
-                  console.log(`updated the database`);
+                    if (err) {
+                        console.log(err);
+                        return -1;
+                      }
+                      console.log(`updated the database`);
                   mainMenu();
                 }
               );
@@ -288,11 +296,11 @@ const updateEmployeeManager = () => {
   db.query(
     "SELECT id AS value, CONCAT(first_name,' ',last_name) AS name FROM employee",
     function (err, employees) {
-      if (err) {
-        console.log(err);
-        return -1;
-      }
-      inquirer
+        if (err) {
+            console.log(err);
+            return -1;
+          }
+          inquirer
         .prompt([
           {
             type: "list",
@@ -322,13 +330,11 @@ const updateEmployeeManager = () => {
               "UPDATE employee SET manager_id = ? WHERE id = ?",
               [answers2.manager_id, answers1.employee_id],
               function (err, results) {
-                if (!err) {
-                  console.log(`updated the database`);
-                } else {
+                if (err) {
                   console.log(err);
                   return -1;
                 }
-
+                console.log(`updated the database`);
                 mainMenu();
               }
             );
@@ -345,7 +351,11 @@ const deleteDepartments = () => {
   db.query(
     "SELECT id AS value, name FROM department",
     function (err, departments) {
-      inquirer
+        if (err) {
+            console.log(err);
+            return -1;
+          }
+          inquirer
         .prompt([
           {
             type: "list",
@@ -362,10 +372,14 @@ const deleteDepartments = () => {
         .then((answers) => {
           if (answers.confirm)
             db.query(
-              "DELETE * FROM department WHERE id = ?",
+              "DELETE FROM department WHERE id = ?",
               [answers.department_id],
               function (err, results) {
-                console.log(`removed from the database`);
+                if (err) {
+                    console.log(err);
+                    return -1;
+                  }
+                  console.log(`removed from the database`);
                 mainMenu();
               }
             );
