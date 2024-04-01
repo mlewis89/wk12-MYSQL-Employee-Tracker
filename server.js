@@ -108,6 +108,7 @@ const mainMenu = () => {
           deleteEmployee();
           break;
         case "View the utilized budget of a department":
+            displayDepartmentBudget();
           break;
       }
     });
@@ -418,6 +419,42 @@ const deleteItem = (tableName,id_ColName,text_ColName) => {
 
 
 //  View the total utilized budget of a department—in other words, the combined salaries of all employees in that department.
-const displayDepartmentBudget = () => {};
+const displayDepartmentBudget = () => {
+    
+    db.query(
+        `SELECT id AS value, name FROM department`,
+        function (err, departments) {
+            if (err) {
+                console.log(err);
+                return -1;
+              }
+              inquirer
+            .prompt([
+              {
+                type: "list",
+                name: "department_id",
+                message: `please select a department.`,
+                choices: departments,
+              },
+            ])
+            .then((answers) => {
+              db.query(
+                  'SELECT SUM(role.salary) AS budget FROM employee E JOIN role ON E.role_id = role.id LEFT JOIN department ON role.department_id = department.id WHERE department.id = ?',
+                  [answers.department_id],
+                  function (err, results) {
+                    if (err) {
+                        console.log(err);
+                        return -1;
+                      }
+                      console.table(results);
+                    mainMenu();
+                  }
+                );
+            });
+        }
+      );
+
+
+};
 
 mainMenu();
