@@ -46,23 +46,30 @@ const mainMenu = () => {
           "add a role",
           "add an employee",
           "update an employee role",
+          "Update employee managers",
+          "View employees by manager",
+          "View employees by department",
+          "Delete departments",
+          "Delete roles",
+          "Delete employees",
+          "View the utilized budget of a department",
         ],
       },
     ])
     .then((answers) => {
       switch (answers.action) {
         case "view all departments":
-          DisplayResults(
+          DisplayTabledResults(
             "SELECT department.id, department.name FROM department"
           );
           break;
         case "view all roles":
-          DisplayResults(
+          DisplayTabledResults(
             "SELECT role.id, role.title, department.name AS department, role.salary FROM role JOIN department ON role.department_id = department.id"
           );
           break;
         case "view all employees":
-          DisplayResults(
+          DisplayTabledResults(
             "SELECT E.id, E.first_name, E.last_name, role.title, department.name AS department, role.salary, CONCAT(M.first_name,' ',M.last_name) AS Manager  FROM employee E LEFT JOIN employee M ON M.id = E.manager_id JOIN role ON E.role_id = role.id LEFT JOIN department ON role.department_id = department.id"
           );
           break;
@@ -78,11 +85,35 @@ const mainMenu = () => {
         case "update an employee role":
           updateEmployeeRole();
           break;
+        case "Update employee managers":
+            updateEmployeeManager();
+          break;
+        case "View employees by manager":
+            DisplayTabledResults(
+                "SELECT E.id, E.first_name, E.last_name, role.title, department.name AS department, role.salary, CONCAT(M.first_name,' ',M.last_name) AS Manager  FROM employee E LEFT JOIN employee M ON M.id = E.manager_id JOIN role ON E.role_id = role.id LEFT JOIN department ON role.department_id = department.id"
+              );
+          break;
+        case  "View employees by department":
+            DisplayTabledResults(
+                "SELECT E.id, E.first_name, E.last_name, role.title, department.name AS department, role.salary, CONCAT(M.first_name,' ',M.last_name) AS Manager  FROM employee E LEFT JOIN employee M ON M.id = E.manager_id JOIN role ON E.role_id = role.id LEFT JOIN department ON role.department_id = department.id"
+              );
+          break;
+        case  "Delete departments":
+            deleteDepartments();
+            break;
+        case  "Delete roles":
+            deleteRoles();
+            break;
+        case  "Delete employees":
+            deleteEmployee();
+            break;
+        case  "View the utilized budget of a department":
+          break;
       }
     });
 };
 
-const DisplayResults = (sql) => {
+const DisplayTabledResults = (sql) => {
   db.query(sql, function (err, results) {
     console.log("");
     console.table(results);
@@ -269,7 +300,7 @@ const updateEmployeeManager = () => {
             type: "list",
             name: "manager_id",
             message: "please select new manager?",
-            choices: employees,
+            choices:  //TODO filter last answer from list.
           },
         ])
         .then((answers) => {
@@ -302,9 +333,9 @@ const deleteDepartments = () => {
                 choices: departments,
               },
               {
-                type: "boolean",
-                name: "confirm"
-                message: `Are you sure you want to delete department id: ${answers.department_id}?`
+                type: "confirm",
+                name: "confirm",
+                message: `Are you sure?`,
               }
             ])
             .then((answers) => {
@@ -335,9 +366,9 @@ const deleteRoles = () => {
                 choices: roles,
               },
               {
-                type: "boolean",
-                name: "confirm"
-                message: `Are you sure you want to delete role id: ${answers.role_id}?`
+                type: "confirm",
+                name: "confirm",
+                message: `Are you sure you want to delete ${answers.role_id}?`,
               }
             ])
             .then((answers) => {
@@ -367,9 +398,9 @@ const deleteEmployee = () => {
                 choices: employees,
               },
               {
-                type: "boolean",
-                name: "confirm"
-                message: `Are you sure you want to delete employee id: ${answers.employee_id}?`
+                type: "confirm",
+                name: "confirm",
+                message: `Are you sure?`,
               }
             ])
             .then((answers) => {
