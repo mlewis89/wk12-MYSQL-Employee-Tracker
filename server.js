@@ -52,46 +52,17 @@ const mainMenu = () => {
     .then((answers) => {
       switch (answers.action) {
         case "view all departments":
-          //WHEN I choose to view all departments
-          //  THEN I am presented with a formatted table showing department names and department ids
-          db.query("SELECT * FROM department", function (err, results) {
-            console.log('');
-            console.table(results);
-          });
+            DisplayResults("SELECT department.id, department.name FROM department");
           break;
         case "view all roles":
-          //WHEN I choose to view all roles
-          //  THEN I am presented with the job title, role id, the department that role belongs to, and the salary for that role
-          db.query("SELECT role.id, role.title, department.name AS department, role.salary FROM role JOIN department ON role.department_id = department.id", function (err, results) {
-            console.log('');
-            console.table(results);
-          });
+            DisplayResults("SELECT role.id, role.title, department.name AS department, role.salary FROM role JOIN department ON role.department_id = department.id");
           break;
         case "view all employees":
-          //WHEN I choose to view all employees
-          //  THEN I am presented with a formatted table showing employee data, including employee ids, first names, last names, job titles, departments, salaries, and managers that the employees report to
-
-          db.query("SELECT E.id, E.first_name, E.last_name, role.title, department.name AS department, role.salary, CONCAT(M.first_name,' ',M.last_name) AS Manager  FROM employee E INNER JOIN employee M ON M.id = E.manager_id JOIN role ON E.role_id = role.id JOIN department ON role.department_id = department.id", function (err, results) {
-            console.table(results);
-          });
+            DisplayResults("SELECT E.id, E.first_name, E.last_name, role.title, department.name AS department, role.salary, CONCAT(M.first_name,' ',M.last_name) AS Manager  FROM employee E INNER JOIN employee M ON M.id = E.manager_id JOIN role ON E.role_id = role.id JOIN department ON role.department_id = department.id");
           break;
         case "add a department":
-          //WHEN I choose to add a department
-          //  THEN I am prompted to enter the name of the department and that department is added to the database
-
-          inquirer
-            .prompt([
-              {
-                //license,
-                type: "Input",
-                name: "name",
-                message: "New Department name?",
-              },
-            ])
-            .then((answers) => {
-              //**todo** add new deparment to database
-            });
-          break;
+            addDepartment();
+            break;
         case "add a role":
           //WHEN I choose to add a role
           //  THEN I am prompted to enter the name, salary, and department for the role and that role is added to the database
@@ -114,7 +85,6 @@ const mainMenu = () => {
                 message: "what is the salary?",
               },
               {
-                //license,
                 type: "list",
                 name: "department",
                 message: "please select a department?",
@@ -129,7 +99,8 @@ const mainMenu = () => {
           roles = [];
           managers = [];
 
-          db.query("SELECT * FROM role", function (err, results) {
+          db.query("SELECT role.name FROM role", function (err, results) {
+            console.log(results);
             results.forEach((res) => roles.push(res.name));
           });
 
@@ -195,6 +166,34 @@ const mainMenu = () => {
       
     });
 };
+
+const DisplayResults = (sql) => {
+  db.query(sql, function (err, results) {
+    console.log("");
+    console.table(results);
+  });
+  mainMenu();
+};
+
+const addDepartment = () => {
+              //WHEN I choose to add a department
+          //  THEN I am prompted to enter the name of the department and that department is added to the database
+
+          inquirer
+            .prompt(
+              {
+                type: "Input",
+                name: "name",
+                message: "New Department name?",
+              })
+            .then((answers) => {
+              db.query('INSERT INTO department (name) VALUES (?)',answers.name, function (err, results) {
+                console.log(`Added ${answers.name} to the database`);
+                mainMenu();
+            })
+              
+            });
+}
 
 //Bonus
 //  Update employee managers.
