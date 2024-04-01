@@ -253,12 +253,74 @@ const updateEmployeeRole = () => {
 
 //Bonus
 //  Update employee managers.
-const updateEmployeeManager = () => {};
+const updateEmployeeManager = () => {
+  db.query(
+    "SELECT id AS value, CONCAT(first_name,' ',last_name) AS name FROM employee",
+    function (err, employees) {
+      inquirer
+        .prompt([
+          {
+            type: "list",
+            name: "employee_id",
+            message: "please select an employee?",
+            choices: employees,
+          },
+          {
+            type: "list",
+            name: "manager_id",
+            message: "please select new manager?",
+            choices: employees,
+          },
+        ])
+        .then((answers) => {
+          db.query(
+            "UPDATE employee SET manager_id = ? WHERE id = ?",
+            [answers.manager_id, answers.employee_id],
+            function (err, results) {
+              console.log(`updated the database`);
+              mainMenu();
+            }
+          );
+        });
+    }
+  );
+};
 
 //  View employees by manager.
 //  View employees by department.
 //  Delete departments, roles, and employees.
-const deleteDepartments = () => {};
+const deleteDepartments = () => {
+    db.query(
+        "SELECT id AS value, name FROM department",
+        function (err, employees) {
+          inquirer
+            .prompt([
+              {
+                type: "list",
+                name: "employee_id",
+                message: "please select a department to delete.",
+                choices: employees,
+              },
+              {
+                type: "boolean",
+                name: "confirm"
+                message: `Are you sure you want to delete employee id: ${answers.employee_id}?`
+              }
+            ])
+            .then((answers) => {
+              if(answers.confirm)
+                db.query(
+                "DELETE * FROM employee WHERE id = ?",
+                [answers.employee_id],
+                function (err, results) {
+                  console.log(`removed from the database`);
+                  mainMenu();
+                }
+              );
+            });
+        }
+      );
+};
 
 const deleteRoles = () => {};
 
@@ -266,6 +328,5 @@ const deleteEmployee = () => {};
 
 //  View the total utilized budget of a department—in other words, the combined salaries of all employees in that department.
 const displayDepartmentBudget = () => {};
-
 
 mainMenu();
