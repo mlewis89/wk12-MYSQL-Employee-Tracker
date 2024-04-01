@@ -52,48 +52,25 @@ const mainMenu = () => {
     .then((answers) => {
       switch (answers.action) {
         case "view all departments":
-            DisplayResults("SELECT department.id, department.name FROM department");
+          DisplayResults(
+            "SELECT department.id, department.name FROM department"
+          );
           break;
         case "view all roles":
-            DisplayResults("SELECT role.id, role.title, department.name AS department, role.salary FROM role JOIN department ON role.department_id = department.id");
+          DisplayResults(
+            "SELECT role.id, role.title, department.name AS department, role.salary FROM role JOIN department ON role.department_id = department.id"
+          );
           break;
         case "view all employees":
-            DisplayResults("SELECT E.id, E.first_name, E.last_name, role.title, department.name AS department, role.salary, CONCAT(M.first_name,' ',M.last_name) AS Manager  FROM employee E INNER JOIN employee M ON M.id = E.manager_id JOIN role ON E.role_id = role.id JOIN department ON role.department_id = department.id");
+          DisplayResults(
+            "SELECT E.id, E.first_name, E.last_name, role.title, department.name AS department, role.salary, CONCAT(M.first_name,' ',M.last_name) AS Manager  FROM employee E INNER JOIN employee M ON M.id = E.manager_id JOIN role ON E.role_id = role.id JOIN department ON role.department_id = department.id"
+          );
           break;
         case "add a department":
-            addDepartment();
-            break;
+          addDepartment();
+          break;
         case "add a role":
-          //WHEN I choose to add a role
-          //  THEN I am prompted to enter the name, salary, and department for the role and that role is added to the database
-
-          let departments = [];
-          db.query("SELECT * FROM department", function (err, results) {
-            results.forEach((res) => departments.push(res.name));
-          });
-
-          inquirer
-            .prompt([
-              {
-                type: "Input",
-                name: "name",
-                message: "New role name?",
-              },
-              {
-                type: "Input",
-                name: "salary",
-                message: "what is the salary?",
-              },
-              {
-                type: "list",
-                name: "department",
-                message: "please select a department?",
-                choices: departments,
-              },
-            ])
-            .then((answers) => {
-              //**todo** add new role to database
-            });
+          addRole();
           break;
         case "add an employee":
           roles = [];
@@ -163,7 +140,6 @@ const mainMenu = () => {
             });
           break;
       }
-      
     });
 };
 
@@ -176,24 +152,65 @@ const DisplayResults = (sql) => {
 };
 
 const addDepartment = () => {
-              //WHEN I choose to add a department
-          //  THEN I am prompted to enter the name of the department and that department is added to the database
+  //WHEN I choose to add a department
+  //  THEN I am prompted to enter the name of the department and that department is added to the database
 
-          inquirer
-            .prompt(
-              {
-                type: "Input",
-                name: "name",
-                message: "New Department name?",
-              })
-            .then((answers) => {
-              db.query('INSERT INTO department (name) VALUES (?)',answers.name, function (err, results) {
-                console.log(`Added ${answers.name} to the database`);
-                mainMenu();
-            })
-              
-            });
-}
+  inquirer
+    .prompt({
+      type: "Input",
+      name: "name",
+      message: "New Department name?",
+    })
+    .then((answers) => {
+      db.query(
+        "INSERT INTO department (name) VALUES (?)",
+        answers.name,
+        function (err, results) {
+          console.log(`Added ${answers.name} to the database`);
+          mainMenu();
+        }
+      );
+    });
+};
+
+const addRole = () => {
+  let departments = [];
+  db.query(
+    "SELECT id as value, name FROM department",
+    function (err, departments) {
+      inquirer
+        .prompt([
+          {
+            type: "Input",
+            name: "title",
+            message: "New role name?",
+          },
+          {
+            type: "Input",
+            name: "salary",
+            message: "what is the salary?",
+          },
+          {
+            type: "list",
+            name: "department_id",
+            message: "please select a department?",
+            choices: departments,
+          },
+        ])
+        .then((answers) => {
+          console.log(answers);
+          db.query(
+            "INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)",
+            [answers.title, answers.salary, answers.department_id],
+            function (err, results) {
+              console.log(`Added ${answers.title} to the database`);
+              mainMenu();
+            }
+          );
+        });
+    }
+  );
+};
 
 //Bonus
 //  Update employee managers.
