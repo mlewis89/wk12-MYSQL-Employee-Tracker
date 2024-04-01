@@ -63,7 +63,7 @@ const mainMenu = () => {
           break;
         case "view all employees":
           DisplayResults(
-            "SELECT E.id, E.first_name, E.last_name, role.title, department.name AS department, role.salary, CONCAT(M.first_name,' ',M.last_name) AS Manager  FROM employee E INNER JOIN employee M ON M.id = E.manager_id JOIN role ON E.role_id = role.id JOIN department ON role.department_id = department.id"
+            "SELECT E.id, E.first_name, E.last_name, role.title, department.name AS department, role.salary, CONCAT(M.first_name,' ',M.last_name) AS Manager  FROM employee E LEFT JOIN employee M ON M.id = E.manager_id JOIN role ON E.role_id = role.id LEFT JOIN department ON role.department_id = department.id"
           );
           break;
         case "add a department":
@@ -76,26 +76,7 @@ const mainMenu = () => {
           addEmployee();
           break;
         case "update an employee role":
-          //WHEN I choose to update an employee role
-          //  THEN I am prompted to select an employee to update and their new role and this information is updated in the database
-
-          employees = [];
-          db.query("SELECT * FROM employee", function (err, results) {
-            results.forEach((res) => employees.push(res.name));
-          });
-
-          inquirer
-            .prompt([
-              {
-                type: "list",
-                name: "employee",
-                message: "please select an employee?",
-                choices: employees,
-              },
-            ])
-            .then((answers) => {
-              //**todo** add new role to database
-            });
+          updateEmployeeRole();
           break;
       }
     });
@@ -173,54 +154,118 @@ const addEmployee = () => {
   roles = [];
   managers = [];
 
-  db.query("SELECT id AS value, title AS name FROM role", function (err, roles) {
-    db.query("SELECT id AS value, CONCAT(first_name,' ',last_name) AS name FROM employee", function (err, managers) {
-        //managers.push(NULL);
-      inquirer
-        .prompt([
-          {
-            type: "Input",
-            name: "first_name",
-            message: "First Name?",
-          },
-          {
-            type: "Input",
-            name: "last_name",
-            message: "Last Name?",
-          },
-          {
-            type: "list",
-            name: "role_id",
-            message: "please select a role?",
-            choices: roles,
-          },
-          {
-            type: "list",
-            name: "manager_id",
-            message: "please select a manager?",
-            choices: managers,
-          },
-        ])
-        .then((answers) => {
-            db.query(
+  db.query(
+    "SELECT id AS value, title AS name FROM role",
+    function (err, roles) {
+      db.query(
+        "SELECT id AS value, CONCAT(first_name,' ',last_name) AS name FROM employee",
+        function (err, managers) {
+          //managers.push(NULL);
+          inquirer
+            .prompt([
+              {
+                type: "Input",
+                name: "first_name",
+                message: "First Name?",
+              },
+              {
+                type: "Input",
+                name: "last_name",
+                message: "Last Name?",
+              },
+              {
+                type: "list",
+                name: "role_id",
+                message: "please select a role?",
+                choices: roles,
+              },
+              {
+                type: "list",
+                name: "manager_id",
+                message: "please select a manager?",
+                choices: managers,
+              },
+            ])
+            .then((answers) => {
+              db.query(
                 "INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)",
-                [answers.first_name, answers.last_name, answers.role_id, answers.manager_id],
+                [
+                  answers.first_name,
+                  answers.last_name,
+                  answers.role_id,
+                  answers.manager_id,
+                ],
                 function (err, results) {
-                  console.log(`Added ${answers.first_name} ${answers.last_name} to the database`);
+                  console.log(
+                    `Added ${answers.first_name} ${answers.last_name} to the database`
+                  );
                   mainMenu();
                 }
               );
-        });
-    });
-  });
+            });
+        }
+      );
+    }
+  );
+};
 
+const updateEmployeeRole = () => {
+  //WHEN I choose to update an employee role
+  //  THEN I am prompted to select an employee to update and their new role and this information is updated in the database
+
+  employees = [];
+  db.query(
+    "SELECT id AS value, title AS name FROM role",
+    function (err, roles) {
+      db.query(
+        "SELECT id AS value, CONCAT(first_name,' ',last_name) AS name FROM employee",
+        function (err, employees) {
+          inquirer
+            .prompt([
+              {
+                type: "list",
+                name: "employee_id",
+                message: "please select an employee?",
+                choices: employees,
+              },
+              {
+                type: "list",
+                name: "role_id",
+                message: "please select new role?",
+                choices: roles,
+              },
+            ])
+            .then((answers) => {
+              db.query(
+                "UPDATE employee SET role_id = ? WHERE id = ?",
+                [answers.role_id, answers.employee_id],
+                function (err, results) {
+                  console.log(`updated the database`);
+                  mainMenu();
+                }
+              );
+            });
+        }
+      );
+    }
+  );
 };
 
 //Bonus
 //  Update employee managers.
+const updateEmployeeManager = () => {};
+
 //  View employees by manager.
 //  View employees by department.
 //  Delete departments, roles, and employees.
+const deleteDepartments = () => {};
+
+const deleteRoles = () => {};
+
+const deleteEmployee = () => {};
+
 //  View the total utilized budget of a department—in other words, the combined salaries of all employees in that department.
+const displayDepartmentBudget = () => {};
+
 
 mainMenu();
