@@ -300,7 +300,7 @@ const updateEmployeeManager = () => {
             type: "list",
             name: "manager_id",
             message: "please select new manager?",
-            choices:  //TODO filter last answer from list.
+            choices:  employees.filter((employee) => employee.id != answers.employee_id),//TODO filter last answer from list.
           },
         ])
         .then((answers) => {
