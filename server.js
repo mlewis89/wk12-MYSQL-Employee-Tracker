@@ -52,13 +52,13 @@ const mainMenu = () => {
     .then((answers) => {
       switch (answers.action) {
         case "view all departments":
-          viewAll_Departments();
+          viewAll('department');
           break;
         case "view all roles":
-          viewAll_Roles();
+            viewAll('role') ; 
           break;
         case "view all employees":
-          viewAll_Employees();
+            viewAll('employee');
           break;
         case "add a department":
           add_Department();
@@ -75,6 +75,13 @@ const mainMenu = () => {
       }
     })
 };
+
+const viewAll = (table) => {
+    db.query(`SELECT * FROM ${table}`,(err, results) => {
+      console.table(results);
+    });
+    mainMenu();
+  };
 
 //WHEN I choose to view all departments
 //  THEN I am presented with a formatted table showing department names and department ids
