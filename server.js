@@ -86,28 +86,28 @@ const mainMenu = () => {
           updateEmployeeRole();
           break;
         case "Update employee managers":
-            updateEmployeeManager();
+          updateEmployeeManager();
           break;
         case "View employees by manager":
-            DisplayTabledResults(
-                "SELECT E.id, E.first_name, E.last_name, role.title, department.name AS department, role.salary, CONCAT(M.first_name,' ',M.last_name) AS Manager  FROM employee E LEFT JOIN employee M ON M.id = E.manager_id JOIN role ON E.role_id = role.id LEFT JOIN department ON role.department_id = department.id"
-              );
+          DisplayTabledResults(
+            "SELECT E.id, E.first_name, E.last_name, role.title, department.name AS department, role.salary, CONCAT(M.first_name,' ',M.last_name) AS Manager  FROM employee E LEFT JOIN employee M ON M.id = E.manager_id JOIN role ON E.role_id = role.id LEFT JOIN department ON role.department_id = department.id"
+          );
           break;
-        case  "View employees by department":
-            DisplayTabledResults(
-                "SELECT E.id, E.first_name, E.last_name, role.title, department.name AS department, role.salary, CONCAT(M.first_name,' ',M.last_name) AS Manager  FROM employee E LEFT JOIN employee M ON M.id = E.manager_id JOIN role ON E.role_id = role.id LEFT JOIN department ON role.department_id = department.id"
-              );
+        case "View employees by department":
+          DisplayTabledResults(
+            "SELECT E.id, E.first_name, E.last_name, role.title, department.name AS department, role.salary, CONCAT(M.first_name,' ',M.last_name) AS Manager  FROM employee E LEFT JOIN employee M ON M.id = E.manager_id JOIN role ON E.role_id = role.id LEFT JOIN department ON role.department_id = department.id"
+          );
           break;
-        case  "Delete departments":
-            deleteDepartments();
-            break;
-        case  "Delete roles":
-            deleteRoles();
-            break;
-        case  "Delete employees":
-            deleteEmployee();
-            break;
-        case  "View the utilized budget of a department":
+        case "Delete departments":
+          deleteDepartments();
+          break;
+        case "Delete roles":
+          deleteRoles();
+          break;
+        case "Delete employees":
+          deleteEmployee();
+          break;
+        case "View the utilized budget of a department":
           break;
       }
     });
@@ -288,6 +288,10 @@ const updateEmployeeManager = () => {
   db.query(
     "SELECT id AS value, CONCAT(first_name,' ',last_name) AS name FROM employee",
     function (err, employees) {
+      if (err) {
+        console.log(err);
+        return -1;
+      }
       inquirer
         .prompt([
           {
@@ -296,22 +300,39 @@ const updateEmployeeManager = () => {
             message: "please select an employee?",
             choices: employees,
           },
-          {
-            type: "list",
-            name: "manager_id",
-            message: "please select new manager?",
-            choices:  employees.filter((employee) => employee.id != answers.employee_id),//TODO filter last answer from list.
-          },
         ])
-        .then((answers) => {
-          db.query(
-            "UPDATE employee SET manager_id = ? WHERE id = ?",
-            [answers.manager_id, answers.employee_id],
-            function (err, results) {
-              console.log(`updated the database`);
-              mainMenu();
-            }
-          );
+        .then((answers1) => {
+            console.log('then1');
+            inquirer
+            .prompt([
+              {
+                type: "list",
+                name: "manager_id",
+                message: "please select new manager?",
+                choices: employees.filter(
+                  (employee) => employee.value != answers1.employee_id
+                ),
+              },
+            ])
+            .then((answers2)=> 
+          {
+            
+            console.log('then2');
+            db.query(
+              "UPDATE employee SET manager_id = ? WHERE id = ?",
+              [answers2.manager_id, answers1.employee_id],
+              function (err, results) {
+                if (!err) {
+                  console.log(`updated the database`);
+                } else {
+                  console.log(err);
+                  return -1;
+                }
+
+                mainMenu();
+              }
+            );
+          });
         });
     }
   );
@@ -321,103 +342,103 @@ const updateEmployeeManager = () => {
 //  View employees by department.
 //  Delete departments, roles, and employees.
 const deleteDepartments = () => {
-    db.query(
-        "SELECT id AS value, name FROM department",
-        function (err, departments) {
-          inquirer
-            .prompt([
-              {
-                type: "list",
-                name: "department_id",
-                message: "please select a department to delete.",
-                choices: departments,
-              },
-              {
-                type: "confirm",
-                name: "confirm",
-                message: `Are you sure?`,
+  db.query(
+    "SELECT id AS value, name FROM department",
+    function (err, departments) {
+      inquirer
+        .prompt([
+          {
+            type: "list",
+            name: "department_id",
+            message: "please select a department to delete.",
+            choices: departments,
+          },
+          {
+            type: "confirm",
+            name: "confirm",
+            message: `Are you sure?`,
+          },
+        ])
+        .then((answers) => {
+          if (answers.confirm)
+            db.query(
+              "DELETE * FROM department WHERE id = ?",
+              [answers.department_id],
+              function (err, results) {
+                console.log(`removed from the database`);
+                mainMenu();
               }
-            ])
-            .then((answers) => {
-              if(answers.confirm)
-                db.query(
-                "DELETE * FROM department WHERE id = ?",
-                [answers.department_id],
-                function (err, results) {
-                  console.log(`removed from the database`);
-                  mainMenu();
-                }
-              );
-            });
-        }
-      );
+            );
+        });
+    }
+  );
 };
 
 const deleteRoles = () => {
-    db.query(
-        "SELECT id AS value, title AS name FROM role",
-        function (err, roles) {
-          inquirer
-            .prompt([
-              {
-                type: "list",
-                name: "role_id",
-                message: "please select a role to delete.",
-                choices: roles,
-              },
-              {
-                type: "confirm",
-                name: "confirm",
-                message: `Are you sure you want to delete ${answers.role_id}?`,
+  db.query(
+    "SELECT id AS value, title AS name FROM role",
+    function (err, roles) {
+      inquirer
+        .prompt([
+          {
+            type: "list",
+            name: "role_id",
+            message: "please select a role to delete.",
+            choices: roles,
+          },
+          {
+            type: "confirm",
+            name: "confirm",
+            message: `Are you sure you want to delete ${answers.role_id}?`,
+          },
+        ])
+        .then((answers) => {
+          if (answers.confirm)
+            db.query(
+              "DELETE * FROM role WHERE id = ?",
+              [answers.role_id],
+              function (err, results) {
+                console.log(`removed from the database`);
+                mainMenu();
               }
-            ])
-            .then((answers) => {
-              if(answers.confirm)
-                db.query(
-                "DELETE * FROM role WHERE id = ?",
-                [answers.role_id],
-                function (err, results) {
-                  console.log(`removed from the database`);
-                  mainMenu();
-                }
-              );
-            });
-        }
-      );};
+            );
+        });
+    }
+  );
+};
 
 const deleteEmployee = () => {
-    db.query(
-        "SELECT id AS value, CONCAT(first_name,' ',last_name) AS name FROM role",
-        function (err, employees) {
-          inquirer
-            .prompt([
-              {
-                type: "list",
-                name: "_id",
-                message: "please select a role to delete.",
-                choices: employees,
-              },
-              {
-                type: "confirm",
-                name: "confirm",
-                message: `Are you sure?`,
+  db.query(
+    "SELECT id AS value, CONCAT(first_name,' ',last_name) AS name FROM role",
+    function (err, employees) {
+      inquirer
+        .prompt([
+          {
+            type: "list",
+            name: "_id",
+            message: "please select a role to delete.",
+            choices: employees,
+          },
+          {
+            type: "confirm",
+            name: "confirm",
+            message: `Are you sure?`,
+          },
+        ])
+        .then((answers) => {
+          if (answers.confirm)
+            db.query(
+              "DELETE * FROM employee WHERE id = ?",
+              [answers.employee_id],
+              function (err, results) {
+                console.log(`removed from the database`);
+                mainMenu();
               }
-            ])
-            .then((answers) => {
-              if(answers.confirm)
-                db.query(
-                "DELETE * FROM employee WHERE id = ?",
-                [answers.employee_id],
-                function (err, results) {
-                  console.log(`removed from the database`);
-                  mainMenu();
-                }
-              );
-            });
-        }
-      );
-    };
-
+            );
+        });
+    }
+  );
+};
 
 //  View the total utilized budget of a department—in other words, the combined salaries of all employees in that department.
 const displayDepartmentBudget = () => {};
