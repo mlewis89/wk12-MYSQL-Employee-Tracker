@@ -36,7 +36,6 @@ const mainMenu = () => {
   inquirer
     .prompt([
       {
-        //license,
         type: "list",
         name: "action",
         message: "What would you like to do?",
@@ -48,7 +47,7 @@ const mainMenu = () => {
           "add a role",
           "add an employee",
           "update an employee role",
-          "Update employee managers",
+          "Update employee manager",
           "View employees by manager",
           "View employees by department",
           "Delete departments",
@@ -87,7 +86,7 @@ const mainMenu = () => {
         case "update an employee role":
           updateEmployeeRole();
           break;
-        case "Update employee managers":
+        case "Update employee manager":
           updateEmployeeManager();
           break;
         case "View employees by manager":
@@ -134,7 +133,7 @@ const addDepartment = () => {
     .prompt({
       type: "Input",
       name: "name",
-      message: "New Department name?",
+      message: "Enter new Department name?",
     })
     .then((answers) => {
       db.query(
@@ -205,7 +204,6 @@ const addEmployee = () => {
       db.query(
         "SELECT id AS value, CONCAT(first_name,' ',last_name) AS name FROM employee",
         function (err, managers) {
-          //managers.push(NULL);
           if (err) {
             console.log(err);
             return -1;
@@ -306,7 +304,7 @@ const updateEmployeeRole = () => {
   );
 };
 
-//Bonus
+//Bonus functionality
 //  Update employee managers.
 const updateEmployeeManager = () => {
   db.query(
