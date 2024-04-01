@@ -90,12 +90,12 @@ const mainMenu = () => {
           break;
         case "View employees by manager":
           DisplayTabledResults(
-            "SELECT E.id, E.first_name, E.last_name, role.title, department.name AS department, role.salary, CONCAT(M.first_name,' ',M.last_name) AS Manager  FROM employee E LEFT JOIN employee M ON M.id = E.manager_id JOIN role ON E.role_id = role.id LEFT JOIN department ON role.department_id = department.id"
+            "SELECT E.id, E.first_name, E.last_name, role.title, department.name AS department, role.salary, CONCAT(M.first_name,' ',M.last_name) AS Manager  FROM employee E LEFT JOIN employee M ON M.id = E.manager_id JOIN role ON E.role_id = role.id LEFT JOIN department ON role.department_id = department.id ORDERBY E.manager_id"
           );
           break;
         case "View employees by department":
           DisplayTabledResults(
-            "SELECT E.id, E.first_name, E.last_name, role.title, department.name AS department, role.salary, CONCAT(M.first_name,' ',M.last_name) AS Manager  FROM employee E LEFT JOIN employee M ON M.id = E.manager_id JOIN role ON E.role_id = role.id LEFT JOIN department ON role.department_id = department.id"
+            "SELECT E.id, E.first_name, E.last_name, role.title, department.name AS department, role.salary, CONCAT(M.first_name,' ',M.last_name) AS Manager  FROM employee E LEFT JOIN employee M ON M.id = E.manager_id JOIN role ON E.role_id = role.id LEFT JOIN department ON role.department_id = department.id ORDERBY role.department_id"
           );
           break;
         case "Delete departments":
@@ -115,7 +115,11 @@ const mainMenu = () => {
 
 const DisplayTabledResults = (sql) => {
   db.query(sql, function (err, results) {
-    console.log("");
+    if (err) {
+        console.log(err);
+        return -1;
+      }
+      console.log("");
     console.table(results);
   });
   mainMenu();
@@ -136,7 +140,12 @@ const addDepartment = () => {
         "INSERT INTO department (name) VALUES (?)",
         answers.name,
         function (err, results) {
-          console.log(`Added ${answers.name} to the database`);
+            if (err) {
+                console.log(err);
+                return -1;
+              }
+              
+            console.log(`Added ${answers.name} to the database`);
           mainMenu();
         }
       );
@@ -148,7 +157,11 @@ const addRole = () => {
   db.query(
     "SELECT id as value, name FROM department",
     function (err, departments) {
-      inquirer
+        if (err) {
+            console.log(err);
+            return -1;
+          }
+          inquirer
         .prompt([
           {
             type: "Input",
@@ -192,6 +205,11 @@ const addEmployee = () => {
         "SELECT id AS value, CONCAT(first_name,' ',last_name) AS name FROM employee",
         function (err, managers) {
           //managers.push(NULL);
+          if (err) {
+            console.log(err);
+            return -1;
+          }
+          
           inquirer
             .prompt([
               {
@@ -344,10 +362,7 @@ const updateEmployeeManager = () => {
   );
 };
 
-//  View employees by manager.
-//  View employees by department.
 //  Delete departments, roles, and employees.
-
 const deleteDepartments = () => {
     deleteItem('department','id','name');
 }
