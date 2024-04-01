@@ -73,49 +73,7 @@ const mainMenu = () => {
           addRole();
           break;
         case "add an employee":
-          roles = [];
-          managers = [];
-
-          db.query("SELECT role.name FROM role", function (err, results) {
-            console.log(results);
-            results.forEach((res) => roles.push(res.name));
-          });
-
-          db.query("SELECT * FROM employee", function (err, results) {
-            results.forEach((res) => managers.push(res.name));
-          });
-
-          console.log(roles);
-          console.log(managers);
-
-          inquirer
-            .prompt([
-              {
-                type: "Input",
-                name: "firstName",
-                message: "First Name?",
-              },
-              {
-                type: "Input",
-                name: "lastName",
-                message: "Last Name?",
-              },
-              {
-                type: "list",
-                name: "role",
-                message: "please select a role?",
-                choices: roles,
-              },
-              {
-                type: "list",
-                name: "manager",
-                message: "please select a manager?",
-                choices: managers,
-              },
-            ])
-            .then((answers) => {
-              //**todo** add new role to database
-            });
+          addEmployee();
           break;
         case "update an employee role":
           //WHEN I choose to update an employee role
@@ -198,7 +156,6 @@ const addRole = () => {
           },
         ])
         .then((answers) => {
-          console.log(answers);
           db.query(
             "INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)",
             [answers.title, answers.salary, answers.department_id],
@@ -210,6 +167,53 @@ const addRole = () => {
         });
     }
   );
+};
+
+const addEmployee = () => {
+  roles = [];
+  managers = [];
+
+  db.query("SELECT id AS value, title AS name FROM role", function (err, roles) {
+    db.query("SELECT id AS value, CONCAT(first_name,' ',last_name) AS name FROM employee", function (err, managers) {
+        //managers.push(NULL);
+      inquirer
+        .prompt([
+          {
+            type: "Input",
+            name: "first_name",
+            message: "First Name?",
+          },
+          {
+            type: "Input",
+            name: "last_name",
+            message: "Last Name?",
+          },
+          {
+            type: "list",
+            name: "role_id",
+            message: "please select a role?",
+            choices: roles,
+          },
+          {
+            type: "list",
+            name: "manager_id",
+            message: "please select a manager?",
+            choices: managers,
+          },
+        ])
+        .then((answers) => {
+            db.query(
+                "INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)",
+                [answers.first_name, answers.last_name, answers.role_id, answers.manager_id],
+                function (err, results) {
+                  console.log(`Added ${answers.first_name} ${answers.last_name} to the database`);
+                  mainMenu();
+                }
+              );
+        });
+    });
+  });
+
 };
 
 //Bonus
