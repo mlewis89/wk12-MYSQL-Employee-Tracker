@@ -1,8 +1,7 @@
 const inquirer = require("inquirer");
 require("dotenv").config();
 const mysql = require("mysql2");
-asTable = require ('as-table').configure ({ delimiter: ' | ' })
-
+asTable = require("as-table").configure({ delimiter: " | " });
 
 // Connect to database
 const db = mysql.createConnection(
@@ -16,7 +15,7 @@ const db = mysql.createConnection(
 );
 
 const generateASCIIBANNER = () =>
-`----------------------------------------------------------------------------------------------------------------
+  `----------------------------------------------------------------------------------------------------------------
 |                                                                                                               |
 |    _____                    _                              __  __ __                                          |
 |   | ____| _ __ ____  _ ___ | | _____  _   _  ___  ___     |  /   /  |  __ _  _ ___    __ _   __ _  ___  _ _   |
@@ -33,7 +32,7 @@ console.log(generateASCIIBANNER());
 //WHEN I start the application
 //  THEN I am presented with the following options: view all departments, view all roles, view all employees, add a department, add a role, add an employee, and update an employee role
 const mainMenu = () => {
-    console.log();
+  console.log();
   inquirer
     .prompt([
       {
@@ -111,7 +110,7 @@ const mainMenu = () => {
           deleteEmployee();
           break;
         case "View the utilized budget of a department":
-            displayDepartmentBudget();
+          displayDepartmentBudget();
           break;
       }
     });
@@ -120,20 +119,17 @@ const mainMenu = () => {
 const DisplayTabledResults = (sql) => {
   db.query(sql, function (err, results) {
     if (err) {
-        console.log(err);
-        return -1;
-      }
-      console.log();
-      console.log();
-      console.log(asTable (results));
+      console.log(err);
+      return -1;
+    }
+    console.log();
+    console.log();
+    console.log(asTable(results));
   });
   mainMenu();
 };
 
 const addDepartment = () => {
-  //WHEN I choose to add a department
-  //  THEN I am prompted to enter the name of the department and that department is added to the database
-
   inquirer
     .prompt({
       type: "Input",
@@ -145,12 +141,12 @@ const addDepartment = () => {
         "INSERT INTO department (name) VALUES (?)",
         answers.name,
         function (err, results) {
-            if (err) {
-                console.log(err);
-                return -1;
-              }
-              
-            console.log(`Added ${answers.name} to the database`);
+          if (err) {
+            console.log(err);
+            return -1;
+          }
+
+          console.log(`Added ${answers.name} to the database`);
           mainMenu();
         }
       );
@@ -162,11 +158,11 @@ const addRole = () => {
   db.query(
     "SELECT id as value, name FROM department",
     function (err, departments) {
-        if (err) {
-            console.log(err);
-            return -1;
-          }
-          inquirer
+      if (err) {
+        console.log(err);
+        return -1;
+      }
+      inquirer
         .prompt([
           {
             type: "Input",
@@ -214,7 +210,7 @@ const addEmployee = () => {
             console.log(err);
             return -1;
           }
-          
+
           inquirer
             .prompt([
               {
@@ -264,9 +260,6 @@ const addEmployee = () => {
 };
 
 const updateEmployeeRole = () => {
-  //WHEN I choose to update an employee role
-  //  THEN I am prompted to select an employee to update and their new role and this information is updated in the database
-
   employees = [];
   db.query(
     "SELECT id AS value, title AS name FROM role",
@@ -274,11 +267,11 @@ const updateEmployeeRole = () => {
       db.query(
         "SELECT id AS value, CONCAT(first_name,' ',last_name) AS name FROM employee",
         function (err, employees) {
-            if (err) {
-                console.log(err);
-                return -1;
-              }
-              inquirer
+          if (err) {
+            console.log(err);
+            return -1;
+          }
+          inquirer
             .prompt([
               {
                 type: "list",
@@ -298,11 +291,11 @@ const updateEmployeeRole = () => {
                 "UPDATE employee SET role_id = ? WHERE id = ?",
                 [answers.role_id, answers.employee_id],
                 function (err, results) {
-                    if (err) {
-                        console.log(err);
-                        return -1;
-                      }
-                      console.log(`updated the database`);
+                  if (err) {
+                    console.log(err);
+                    return -1;
+                  }
+                  console.log(`updated the database`);
                   mainMenu();
                 }
               );
@@ -319,11 +312,11 @@ const updateEmployeeManager = () => {
   db.query(
     "SELECT id AS value, CONCAT(first_name,' ',last_name) AS name FROM employee",
     function (err, employees) {
-        if (err) {
-            console.log(err);
-            return -1;
-          }
-          inquirer
+      if (err) {
+        console.log(err);
+        return -1;
+      }
+      inquirer
         .prompt([
           {
             type: "list",
@@ -333,8 +326,8 @@ const updateEmployeeManager = () => {
           },
         ])
         .then((answers1) => {
-            console.log('then1');
-            inquirer
+          console.log("then1");
+          inquirer
             .prompt([
               {
                 type: "list",
@@ -345,23 +338,21 @@ const updateEmployeeManager = () => {
                 ),
               },
             ])
-            .then((answers2)=> 
-          {
-            
-            console.log('then2');
-            db.query(
-              "UPDATE employee SET manager_id = ? WHERE id = ?",
-              [answers2.manager_id, answers1.employee_id],
-              function (err, results) {
-                if (err) {
-                  console.log(err);
-                  return -1;
+            .then((answers2) => {
+              console.log("then2");
+              db.query(
+                "UPDATE employee SET manager_id = ? WHERE id = ?",
+                [answers2.manager_id, answers1.employee_id],
+                function (err, results) {
+                  if (err) {
+                    console.log(err);
+                    return -1;
+                  }
+                  console.log(`updated the database`);
+                  mainMenu();
                 }
-                console.log(`updated the database`);
-                mainMenu();
-              }
-            );
-          });
+              );
+            });
         });
     }
   );
@@ -369,98 +360,94 @@ const updateEmployeeManager = () => {
 
 //  Delete departments, roles, and employees.
 const deleteDepartments = () => {
-    deleteItem('department','id','name');
-}
+  deleteItem("department", "id", "name");
+};
 
 const deleteRoles = () => {
-    deleteItem('role','id','title');
-}
+  deleteItem("role", "id", "title");
+};
 
 const deleteEmployee = () => {
-    deleteItem('employee','id',"CONCAT(first_name,' ',last_name)");
-}
+  deleteItem("employee", "id", "CONCAT(first_name,' ',last_name)");
+};
 
-const deleteItem = (tableName,id_ColName,text_ColName) => {
-    db.query(
-      `SELECT ${id_ColName} AS value, ${text_ColName} AS name FROM ${tableName}`,
-      function (err, currentItems) {
-          if (err) {
-              console.log(err);
-              return -1;
-            }
-            inquirer
-          .prompt([
-            {
-              type: "list",
-              name: "id",
-              message: `please select a ${tableName} to delete.`,
-              choices: currentItems,
-            },
-            {
-              type: "confirm",
-              name: "confirm",
-              message: `Are you sure?`,
-            },
-          ])
-          .then((answers) => {
-            if (answers.confirm)
-              db.query(
-                `DELETE FROM ${tableName} WHERE ${id_ColName} = ?`,
-                [answers.id],
-                function (err, results) {
-                  if (err) {
-                      console.log(err);
-                      return -1;
-                    }
-                    console.log(`removed from the database`);
-                  mainMenu();
-                }
-              );
-          });
+const deleteItem = (tableName, id_ColName, text_ColName) => {
+  db.query(
+    `SELECT ${id_ColName} AS value, ${text_ColName} AS name FROM ${tableName}`,
+    function (err, currentItems) {
+      if (err) {
+        console.log(err);
+        return -1;
       }
-    );
-  };
-
+      inquirer
+        .prompt([
+          {
+            type: "list",
+            name: "id",
+            message: `please select a ${tableName} to delete.`,
+            choices: currentItems,
+          },
+          {
+            type: "confirm",
+            name: "confirm",
+            message: `Are you sure?`,
+          },
+        ])
+        .then((answers) => {
+          if (answers.confirm)
+            db.query(
+              `DELETE FROM ${tableName} WHERE ${id_ColName} = ?`,
+              [answers.id],
+              function (err, results) {
+                if (err) {
+                  console.log(err);
+                  return -1;
+                }
+                console.log(`removed from the database`);
+                mainMenu();
+              }
+            );
+        });
+    }
+  );
+};
 
 //  View the total utilized budget of a department—in other words, the combined salaries of all employees in that department.
 const displayDepartmentBudget = () => {
-    
-    db.query(
-        `SELECT id AS value, name FROM department`,
-        function (err, departments) {
-            if (err) {
+  db.query(
+    `SELECT id AS value, name FROM department`,
+    function (err, departments) {
+      if (err) {
+        console.log(err);
+        return -1;
+      }
+      inquirer
+        .prompt([
+          {
+            type: "list",
+            name: "department_id",
+            message: `please select a department.`,
+            choices: departments,
+          },
+        ])
+        .then((answers) => {
+          db.query(
+            "SELECT SUM(role.salary) AS budget FROM employee E JOIN role ON E.role_id = role.id LEFT JOIN department ON role.department_id = department.id WHERE department.id = ?",
+            [answers.department_id],
+            function (err, results) {
+              if (err) {
                 console.log(err);
                 return -1;
               }
-              inquirer
-            .prompt([
-              {
-                type: "list",
-                name: "department_id",
-                message: `please select a department.`,
-                choices: departments,
-              },
-            ])
-            .then((answers) => {
-              db.query(
-                  'SELECT SUM(role.salary) AS budget FROM employee E JOIN role ON E.role_id = role.id LEFT JOIN department ON role.department_id = department.id WHERE department.id = ?',
-                  [answers.department_id],
-                  function (err, results) {
-                    if (err) {
-                        console.log(err);
-                        return -1;
-                      }
-                      console.log();
-                      console.log();
-                      console.log(asTable(results));
-                    mainMenu();
-                  }
-                );
-            });
-        }
-      );
-
-
+              console.log();
+              console.log();
+              console.log(asTable(results));
+              mainMenu();
+            }
+          );
+        });
+    }
+  );
 };
 
 mainMenu();
