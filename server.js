@@ -1,6 +1,8 @@
 const inquirer = require("inquirer");
 require("dotenv").config();
 const mysql = require("mysql2");
+asTable = require ('as-table').configure ({ delimiter: ' | ' })
+
 
 // Connect to database
 const db = mysql.createConnection(
@@ -14,7 +16,7 @@ const db = mysql.createConnection(
 );
 
 const generateASCIIBANNER = () =>
-  `----------------------------------------------------------------------------------------------------------------
+`----------------------------------------------------------------------------------------------------------------
 |                                                                                                               |
 |    _____                    _                              __  __ __                                          |
 |   | ____| _ __ ____  _ ___ | | _____  _   _  ___  ___     |  /   /  |  __ _  _ ___    __ _   __ _  ___  _ _   |
@@ -31,6 +33,7 @@ console.log(generateASCIIBANNER());
 //WHEN I start the application
 //  THEN I am presented with the following options: view all departments, view all roles, view all employees, add a department, add a role, add an employee, and update an employee role
 const mainMenu = () => {
+    console.log();
   inquirer
     .prompt([
       {
@@ -120,8 +123,9 @@ const DisplayTabledResults = (sql) => {
         console.log(err);
         return -1;
       }
-      console.log("");
-    console.table(results);
+      console.log();
+      console.log();
+      console.log(asTable (results));
   });
   mainMenu();
 };
@@ -446,7 +450,9 @@ const displayDepartmentBudget = () => {
                         console.log(err);
                         return -1;
                       }
-                      console.table(results);
+                      console.log();
+                      console.log();
+                      console.log(asTable(results));
                     mainMenu();
                   }
                 );
