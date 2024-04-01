@@ -55,13 +55,15 @@ const mainMenu = () => {
           //WHEN I choose to view all departments
           //  THEN I am presented with a formatted table showing department names and department ids
           db.query("SELECT * FROM department", function (err, results) {
+            console.log('');
             console.table(results);
           });
           break;
         case "view all roles":
           //WHEN I choose to view all roles
           //  THEN I am presented with the job title, role id, the department that role belongs to, and the salary for that role
-          db.query("SELECT * FROM role", function (err, results) {
+          db.query("SELECT role.id, role.title, department.name AS department, role.salary FROM role JOIN department ON role.department_id = department.id", function (err, results) {
+            console.log('');
             console.table(results);
           });
           break;
@@ -69,7 +71,7 @@ const mainMenu = () => {
           //WHEN I choose to view all employees
           //  THEN I am presented with a formatted table showing employee data, including employee ids, first names, last names, job titles, departments, salaries, and managers that the employees report to
 
-          db.query("SELECT * FROM employee", function (err, results) {
+          db.query("SELECT E.id, E.first_name, E.last_name, role.title, department.name AS department, role.salary, CONCAT(M.first_name,' ',M.last_name) AS Manager  FROM employee E INNER JOIN employee M ON M.id = E.manager_id JOIN role ON E.role_id = role.id JOIN department ON role.department_id = department.id", function (err, results) {
             console.table(results);
           });
           break;
@@ -190,6 +192,7 @@ const mainMenu = () => {
             });
           break;
       }
+      
     });
 };
 
