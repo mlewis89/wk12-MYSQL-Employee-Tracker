@@ -94,6 +94,7 @@ https://github.com/mlewis89/wk12_MYSQL_Employee-Tracker
 ![completed application](/assets/Capture3.PNG)
 
 [Click here to view a video of the application in use](./assets/completedApplication_video.webm)
+[google drive link to video](https://drive.google.com/file/d/1eLzEZ9BzxVV-tYIPCIqyJLsWLOhuGEE3/view)
 
 ## License
 This project is licensed under the MIT.
