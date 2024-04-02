@@ -1,16 +1,16 @@
 
 
-# Bootcamp Challenge Week Eleven - ExpressJS: Note taking API server application
+# Bootcamp Challenge Week Twelve - MYSQL: Employee Tracker
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 
 ## Description
 
-The purpose of this application is to test my knowledge of Node-js and ExpressJS, by producing a simple API server to serve the public html and javascript and provide full functionality.
+The purpose of this application is to test my knowledge of MYSQL and Node-j, by producing a simple command line application to as a basic employeer tracker.
 
-This application makes it easy for the user to take a series of notes for viewing later.
+This application makes it easy for the user to add, veiw and delete employees, roles and departments withing their company.
 
-During this project I learnt how to create API routes and how to provide the required information to an exisiting front end.
+During this project I learnt how to make SQL queiries to a MYSYL database. and some more advanced functions within the inquirer package.
 
 ## Table of Contents
     
@@ -27,32 +27,41 @@ During this project I learnt how to create API routes and how to provide the req
 ## User Story
 
 ```
-AS A small business owner
-I WANT to be able to write and save notes
-SO THAT I can organize my thoughts and keep track of tasks I need to complete
+AS A business owner
+I WANT to be able to view and manage the departments, roles, and employees in my company
+SO THAT I can organize and plan my business
 ```
 
 ## Acceptance Criteria
 
 ```
-GIVEN a note-taking application
-WHEN I open the Note Taker
-THEN I am presented with a landing page with a link to a notes page
-WHEN I click on the link to the notes page
-THEN I am presented with a page with existing notes listed in the left-hand column, plus empty fields to enter a new note title and the note’s text in the right-hand column
-WHEN I enter a new note title and the note’s text
-THEN a "Save Note" button and a "Clear Form" button appear in the navigation at the top of the page
-WHEN I click on the Save button
-THEN the new note I have entered is saved and appears in the left-hand column with the other existing notes and the buttons in the navigation disappear
-WHEN I click on an existing note in the list in the left-hand column
-THEN that note appears in the right-hand column and a "New Note" button appears in the navigation
-WHEN I click on the "New Note" button in the navigation at the top of the page
-THEN I am presented with empty fields to enter a new note title and the note’s text in the right-hand column and the button disappears
-Mock-Up
+GIVEN a command-line application that accepts user input
+WHEN I start the application
+THEN I am presented with the following options: view all departments, view all roles, view all employees, add a department, add a role, add an employee, and update an employee role
+WHEN I choose to view all departments
+THEN I am presented with a formatted table showing department names and department ids
+WHEN I choose to view all roles
+THEN I am presented with the job title, role id, the department that role belongs to, and the salary for that role
+WHEN I choose to view all employees
+THEN I am presented with a formatted table showing employee data, including employee ids, first names, last names, job titles, departments, salaries, and managers that the employees report to
+WHEN I choose to add a department
+THEN I am prompted to enter the name of the department and that department is added to the database
+WHEN I choose to add a role
+THEN I am prompted to enter the name, salary, and department for the role and that role is added to the database
+WHEN I choose to add an employee
+THEN I am prompted to enter the employee’s first name, last name, role, and manager, and that employee is added to the database
+WHEN I choose to update an employee role
+THEN I am prompted to select an employee to update and their new role and this information is updated in the database
 ```
 ## Bonus
+add some additional functionality to your application, such as the ability to do the following:
+
 ```
-DELETE /api/notes/:id should receive a query parameter containing the id of a note to delete. In order to delete a note, you'll need to read all notes from the db.json file, remove the note with the given id property, and then rewrite the notes to the db.json file.
+Update employee managers.
+View employees by manager.
+View employees by department.
+Delete departments, roles, and employees.
+View the total utilized budget of a department—in other words, the combined salaries of all employees in that department.
 ```
 
 ## Installation
@@ -75,10 +84,8 @@ Then navigate to the link provided in the command line.
 
 
 ## GitHub repository
-https://github.com/mlewis89/wk11_ExpressJs_Note-Taker
+https://github.com/mlewis89/wk12_MYSQL_Employee-Tracker
 
-## Heroku Hosting
-https://agile-citadel-28187-7464f8284b7b.herokuapp.com/
 
 ## Screenshots / Video of Completed Challenge
 
